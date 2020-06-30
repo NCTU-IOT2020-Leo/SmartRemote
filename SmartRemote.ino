@@ -2,6 +2,8 @@
 #include <Arduino.h>
 #include <IRremoteESP8266.h>
 #include <IRsend.h>
+
+#include "DAI.h"
 #include "remoter.h"
 
 const uint16_t kSendPin = 5;
@@ -12,6 +14,7 @@ IRsend irsend(kSendPin);
 void setup() {
     Serial.begin(115200);
     irsend.begin();
+    init_dai();
 }
 
 void loop() {
@@ -27,5 +30,7 @@ void loop() {
     Serial.println(rawdata, HEX);
     remoter_send(irsend, rawdata);
     iter++;
+
+    dai_loop();
     delay(5000);
 }
