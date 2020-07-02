@@ -1,13 +1,13 @@
 #ifndef DAI_H
 #define DAI_H
 
-#define DefaultIoTtalkServerIP "140.113.199.200"
-#define DM_name "NodeMCU"
+#define DefaultIoTtalkServerIP "140.113.199.205"
+#define DM_name "SimpleAirConditioner"
 #define DF_list                                           \
     {                                                     \
-        "D0~", "D1~", "D2~", "D5", "D6", "D7", "D8", "A0" \
+        "SettingTemperature-O", "Speed-O", "Switch-O" \
     }
-#define nODF 10 // The max number of ODFs which the DA can pull.
+#define nODF 3 // The max number of ODFs which the DA can pull.
 
 #include <Arduino.h>
 

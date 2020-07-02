@@ -239,7 +239,7 @@ int iottalk_register(void)
     }
 
     //send the register packet
-    Serial.println("[HTTP] POST..." + url);
+    //Serial.println("[HTTP] POST..." + url);
     String profile = "{\"profile\": {\"d_name\": \"";
     //profile += "MCU.";
     for (int i = 3; i < 6; i++) {
@@ -256,8 +256,8 @@ int iottalk_register(void)
     http.addHeader("Content-Type", "application/json");
     int httpCode = http.POST(profile);
 
-    Serial.println("[HTTP] Register... code: " + (String)httpCode);
-    Serial.println(http.getString());
+    //Serial.println("[HTTP] Register... code: " + (String)httpCode);
+    //Serial.println(http.getString());
     //http.end();
     url += "/";
     return httpCode;
@@ -310,7 +310,7 @@ int push(char *df_name, String value)
 String pull(char *df_name)
 {
     http.begin(url + String(df_name));
-    Serial.println(url + String(df_name));
+    //Serial.println(url + String(df_name));
     http.addHeader("Content-Type", "application/json");
     int httpCode = http.GET(); //http state code
 
@@ -328,7 +328,7 @@ String pull(char *df_name)
     String get_ret_str = http.getString(); //After send GET request , store the return string
     //    Serial.println
 
-    Serial.println("output " + String(df_name) + ": \n" + get_ret_str);
+    //Serial.println("output " + String(df_name) + ": \n" + get_ret_str);
     http.end();
 
     get_ret_str = remove_ws(get_ret_str);
@@ -359,7 +359,6 @@ String pull(char *df_name)
 }
 
 long sensorValue, suspend = 0;
-long cycleTimestamp = millis();
 void init_dai()
 {
     pinMode(2, OUTPUT); // D4 : on board led

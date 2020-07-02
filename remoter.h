@@ -7,7 +7,7 @@
 // Fan Speed
 const uint8_t tt_fan_speed_auto = 0b000;
 const uint8_t tt_fan_speed_low = 0b001;
-const uint8_t tt_fan_speed_mid = 0b010;
+const uint8_t tt_fan_speed_med = 0b010;
 const uint8_t tt_fan_speed_high = 0b100;
 // Fuzzy
 const uint8_t tt_fuzzy_awful = 0b01;
