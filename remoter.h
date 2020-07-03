@@ -38,9 +38,10 @@ struct TatungAcData {
     bool power;
 
     TatungAcData();
-    TatungAcData(uint32_t data);
 
+    void serial_print() const;
     uint32_t encode() const;
+    static int decode(uint32_t code, TatungAcData &data);
 };
 
 void remoter_send(IRsend &ir, uint32_t data);

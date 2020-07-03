@@ -31,7 +31,8 @@ void clr_eeprom(int sw = 0)
         delay(3000);
     }
     if ((digitalRead(0) == LOW) || (sw == 1)) {
-        for (int addr = 0; addr < 50; addr++)
+        int len = EEPROM.length();
+        for (int addr = 0; addr < len; addr++)
             EEPROM.write(addr, 0); // clear eeprom
         EEPROM.commit();
         Serial.println("Clear EEPROM and reboot.");
@@ -381,6 +382,7 @@ void init_dai()
 
     while (wifimode) {
         server.handleClient(); //waitting for connecting to AP ;
+        if (digitalRead(0) == LOW) clr_eeprom();
         delay(10);
     }
 

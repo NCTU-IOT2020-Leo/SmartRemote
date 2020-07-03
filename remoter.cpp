@@ -1,7 +1,9 @@
 #include "remoter.h"
+#include <Arduino.h>
 #include <IRsend.h>
 #include <IRutils.h>
 
+using irutils::getBit;
 using irutils::setBit;
 using irutils::setBits;
 
@@ -50,6 +52,30 @@ TatungAcData::TatungAcData()
     this->power = false;
 }
 
+void TatungAcData::serial_print() const
+{
+    Serial.println("Current State:");
+    Serial.print("\tPower: ");
+    Serial.println(this->power);
+    Serial.print("\tTemperature: ");
+    Serial.println(this->temperature);
+    Serial.print("\tFan Speed: ");
+    switch (this->fan_speed) {
+        case tt_fan_speed_low:
+            Serial.println("Low");
+            break;
+        case tt_fan_speed_med:
+            Serial.println("Medium");
+            break;
+        case tt_fan_speed_high:
+            Serial.println("High");
+            break;
+        case tt_fan_speed_auto:
+            Serial.println("Auto");
+            break;
+    }
+}
+
 uint32_t TatungAcData::encode() const
 {
     uint32_t data;
@@ -71,3 +97,47 @@ uint32_t TatungAcData::encode() const
     setBits(&data, 0, 1, 0);
     return data;
 }
+
+uint32_t getBits(uint32_t code, int offset, int length)
+{
+    uint32_t mask = (1 << length) - 1;
+    mask <<= offset;
+    return ((code & mask) >> offset);
+}
+
+#define BIT_LEN 32
+int TatungAcData::decode(uint32_t code, TatungAcData &data)
+{
+    TatungAcData tmp;
+
+    uint32_t temperature = getBits(code, 26, 3);
+    if (temperature >= 17 && temperature < 32) {
+        tmp.temperature = temperature;
+    } else {
+        return -1;
+    }
+    uint32_t fan_speed = getBits(code, 23, 3);
+    if (fan_speed == tt_fan_speed_auto || fan_speed == tt_fan_speed_low || fan_speed == tt_fan_speed_med || fan_speed == tt_fan_speed_high) {
+        tmp.fan_speed = fan_speed;
+    } else {
+        return -1;
+    }
+    if (getBits(code, 20, 3) != 0b111) return -1;
+    tmp.sterilization = getBit(code, 19, BIT_LEN);
+    if (getBits(code, 17, 2) != 0) return -1;
+    //fuzzy
+    //timer_hour
+    tmp.timer_enabled = getBit(code, 10, BIT_LEN);
+    tmp.timer_action = getBit(code, 9, BIT_LEN);
+    tmp.sleeping = getBit(code, 8, BIT_LEN);
+    tmp.rhythm = getBit(code, 7, BIT_LEN);
+    if (getBits(code, 5, 2) != 0) return -1;
+    tmp.mode = getBits(code, 3, 2);
+    if (!getBit(code, 2, BIT_LEN)) return -1;
+    tmp.power = getBit(code, 1, BIT_LEN);
+    if (getBit(code, 0, BIT_LEN)) return -1;
+
+    data = tmp;
+    return 0;
+}
+
